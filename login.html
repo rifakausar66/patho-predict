@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patho-Predict - Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: url("/static/eye-image4.jpg") no-repeat center/cover;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.35);
+    }
+
+    h1 {
+      position: absolute;
+      top: 40px;
+      color: #00e5ff;
+      font-size: 50px;
+      text-shadow: 0 0 25px #00bcd4;
+      z-index: 2;
+    }
+
+    .login-box {
+      position: relative;
+      z-index: 2;
+      background: rgba(255,255,255,0.15);
+      padding: 35px;
+      border-radius: 20px;
+      width: 350px;
+      text-align: center;
+      color: white;
+      backdrop-filter: blur(5px);
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 25px;
+      border: none;
+      background: rgba(255,255,255,0.25);
+      color: white;
+    }
+
+    button {
+      width: 95%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 25px;
+      background: #00bcd4;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <h1>Patho-Predict</h1>
+
+  <div class="login-box">
+    <h2>Login</h2>
+
+    <form id="loginForm">
+      <input type="text" placeholder="Enter Username" required>
+      <input type="email" placeholder="Enter Email" required>
+      <input type="password" id="password" placeholder="Enter Password" required>
+      <input type="password" id="confirm" placeholder="Confirm Password" required>
+      <button type="submit">Login</button>
+    </form>
+
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      if(document.getElementById("password").value !== document.getElementById("confirm").value){
+        alert("Passwords do not match!");
+        return;
+      }
+
+      window.location.href = "/upload";
+    });
+  </script>
+
+</body>
+</html>
