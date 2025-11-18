@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 
 # Load trained model
-model = load_model("eye_disease_model.h5")
+model = load_model("models/eye_disease_model.h5")
 CLASS_NAMES = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
 
 
