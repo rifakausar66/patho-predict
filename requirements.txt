@@ -1,5 +1,5 @@
 Flask==3.0.2
-tensorflow==2.10.0
-numpy
-Pillow
-gunicorn
+tensorflow==2.11.0
+numpy<2.0          # Forces installation of a compatible NumPy 1.x version
+gunicorn==20.1.0
+Pillow==9.4.0
