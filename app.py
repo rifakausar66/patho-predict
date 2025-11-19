@@ -7,6 +7,7 @@ import os
 app = Flask(__name__)
 
 # Load trained model
+# Note: Ensure you have pushed the fix for 'tensorflow==2.15.0' in requirements.txt
 model = load_model('models/eye_disease_model.h5')
 CLASS_NAMES = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
 
@@ -16,7 +17,7 @@ CLASS_NAMES = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
 def looks_like_eye(img):
     w, h = img.size
     
-    # Very small or weird images are not eye images
+    # This check is weak, but keeps very small/corrupt files out
     if w < 100 or h < 100:
         return False
     
@@ -47,9 +48,14 @@ def predict():
     file.save(path)
 
     # Load and preprocess the image
-    img = Image.open(path).convert("RGB").resize((224, 224))
+    try:
+        img = Image.open(path).convert("RGB").resize((224, 224))
+    except Exception:
+        # Handle case where file is not a valid image
+        return redirect("/result?disease=Invalid Image File&confidence=0%")
 
-    # Check if uploaded image is eye or not
+
+    # Check if uploaded image is eye or not (basic size check)
     if not looks_like_eye(img):
         return redirect("/result?disease=Not an Eye Image&confidence=0%")
 
@@ -58,11 +64,18 @@ def predict():
     pred = model.predict(x)
     max_conf = float(np.max(pred))
 
-    # Confidence threshold (60%) → if below, we say NOT AN EYE IMAGE
-    if max_conf < 0.60:
-        disease = "Not an Eye Image"
+    # *** IMPORTANT CHANGE: Increased Confidence Threshold ***
+    # Model is overconfident on random images. Raising this threshold 
+    # forces the model to be extremely sure it's one of the four classes.
+    # Set to 95% (0.95) to filter out most random images.
+    CONFIDENCE_THRESHOLD = 0.95
+    
+    if max_conf < CONFIDENCE_THRESHOLD:
+        # If confidence is below the high threshold, treat it as an unknown or non-eye image
+        disease = "Not a Reliable Prediction (Low Confidence)"
         confidence = round(max_conf * 100, 2)
     else:
+        # If confidence is high, use the model's top prediction
         disease = CLASS_NAMES[np.argmax(pred)]
         confidence = round(max_conf * 100, 2)
 
@@ -79,4 +92,3 @@ def result():
 if __name__ == "__main__":
     # Allows public access (important for deployment)
     app.run(host="0.0.0.0", port=5000, debug=True)
-
